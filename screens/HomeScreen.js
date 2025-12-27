@@ -6,7 +6,7 @@ import RecipeCard from "../components/RecipeCard";
 import { recipes } from "../data/recipes";
 import { getFavoriteIds, toggleFavoriteId } from "../storage/storage";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [query, setQuery] = useState("");
   const [favoriteIds, setFavoriteIds] = useState([]);
 
@@ -59,7 +59,9 @@ export default function HomeScreen() {
             item={item}
             isFavorite={favoriteIds.includes(item.id)}
             onToggleFavorite={toggleFavorite}
-            onPress={() => {}}
+            onPress={() =>
+              navigation.navigate("RecipeDetail", { recipe: item })
+            }
           />
         )}
       />
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#E5989B",
     textAlign: "center",
-    marginTop: 24,
+    marginTop: 10,
   },
   sub: {
     fontSize: 13,

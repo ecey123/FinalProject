@@ -84,4 +84,30 @@ export async function clearShoppingDone() {
   await setShoppingItems(next);
   return next;
 }
+export async function addShoppingItems(texts) {
+  const items = await getShoppingItems();
+
+  const cleaned = (texts || [])
+    .map((t) => String(t || "").trim())
+    .filter(Boolean);
+
+  if (cleaned.length === 0) return items;
+
+  // Aynı item varsa tekrar ekleme (case-insensitive)
+  const existingLower = new Set(items.map((x) => x.text.toLowerCase()));
+
+  const newOnes = cleaned
+    .filter((t) => !existingLower.has(t.toLowerCase()))
+    .map((t) => ({
+      id: String(Date.now()) + "_" + Math.random().toString(16).slice(2),
+      text: t,
+      done: false,
+      createdAt: Date.now(),
+    }));
+
+  const next = [...newOnes, ...items];
+  await setShoppingItems(next);
+  return next;
+}
+
 

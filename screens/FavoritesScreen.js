@@ -7,7 +7,7 @@ import { recipes } from "../data/recipes";
 import { getFavoriteIds, toggleFavoriteId } from "../storage/storage";
 import EmptyState from "../components/EmptyStateComponent";
 
-export default function FavoritesScreen() {
+export default function FavoritesScreen({ navigation }) {
   const [favoriteIds, setFavoriteIds] = useState([]);
 
   useFocusEffect(
@@ -54,7 +54,9 @@ export default function FavoritesScreen() {
               item={item}
               isFavorite={true}
               onToggleFavorite={toggleFavorite}
-              onPress={() => {}}
+              onPress={() =>
+                navigation.navigate("RecipeDetail", { recipe: item })
+              }
             />
           )}
         />
@@ -75,8 +77,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#E5989B",
     textAlign: "center",
-    marginTop: 24
-,
+    marginTop: 10,
   },
   sub: {
     fontSize: 13,
