@@ -109,5 +109,51 @@ export async function addShoppingItems(texts) {
   await setShoppingItems(next);
   return next;
 }
+export async function clearFavorites() {
+  try {
+    await AsyncStorage.setItem("favorites_v1", JSON.stringify([]));
+    return [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function clearShopping() {
+  try {
+    await AsyncStorage.setItem("shopping_v1", JSON.stringify([]));
+    return [];
+  } catch (e) {
+    return [];
+  }
+}
+const USER_KEY = "user_v1";
+
+export async function setUser(user) {
+  try {
+    await AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+export async function getUser() {
+  try {
+    const raw = await AsyncStorage.getItem(USER_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function clearUser() {
+  try {
+    await AsyncStorage.removeItem(USER_KEY);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 
