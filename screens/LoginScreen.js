@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>RecipeNest</Text>
@@ -17,6 +17,8 @@ export default function LoginScreen() {
         placeholder="Email"
         placeholderTextColor="#B5838D"
         style={styles.input}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
 
       <TextInput
@@ -26,11 +28,14 @@ export default function LoginScreen() {
         style={styles.input}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Home")}
+      >
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("Home")}>
         <Text style={styles.guest}>Continue as Guest</Text>
       </TouchableOpacity>
     </View>
@@ -59,15 +64,18 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     backgroundColor: "#FFFFFF",
-    padding: 15,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     borderRadius: 16,
     marginBottom: 14,
     fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#F4B6C2",
   },
   button: {
     width: "100%",
     backgroundColor: "#E5989B",
-    padding: 16,
+    paddingVertical: 16,
     borderRadius: 18,
     marginTop: 10,
   },
@@ -81,5 +89,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: "#5A2A2A",
     fontSize: 14,
+    textDecorationLine: "underline",
   },
 });
