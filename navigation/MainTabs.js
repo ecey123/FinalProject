@@ -8,6 +8,8 @@ import FavoritesScreen from "../screens/FavoritesScreen";
 import AddRecipeScreen from "../screens/AddRecipeScreen";
 import ShoppingListScreen from "../screens/ShoppingListScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import { useNavigation } from "@react-navigation/native";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -88,14 +90,22 @@ export default function MainTabs() {
 }
 
 function PlusButton() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.plusWrap}>
-      <TouchableOpacity style={styles.plusBtn} activeOpacity={0.85}>
+      <TouchableOpacity
+        style={styles.plusBtn}
+        activeOpacity={0.85}
+        hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
+        onPress={() => navigation.navigate("AddRecipeTab")}
+      >
         <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </View>
   );
 }
+
 
 const colors = {
   bg: "#FFF0F3",
@@ -119,7 +129,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 70,
     height: 70,
-    marginTop: -26,
+    marginTop: -40,
   },
   plusBtn: {
     width: 56,
