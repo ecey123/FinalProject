@@ -3,21 +3,28 @@ import { View, Text, StyleSheet, FlatList, TextInput } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 import RecipeCard from "../components/RecipeCard";
-import { recipes } from "../data/recipes";
-import { getFavoriteIds, toggleFavoriteId } from "../storage/storage";
+import { recipes as DEFAULT_RECIPES } from "../data/recipes";
+import { getFavoriteIds, toggleFavoriteId, getUserRecipes } from "../storage/storage";
 
 export default function HomeScreen({ navigation }) {
   const [query, setQuery] = useState("");
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const [allRecipes, setAllRecipes] = useState([]);
 
-  // Home'a her gelindiğinde favorileri storage'dan çek
+  // Home'a her gelindiğinde favorileri + user recipes'i storage'dan çek
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
+
       (async () => {
         const ids = await getFavoriteIds();
-        if (mounted) setFavoriteIds(ids);
+        const user = await getUserRecipes(); // ✅ user ekledikleri
+        if (mounted) {
+          setFavoriteIds(ids);
+          setAllRecipes([...user, ...DEFAULT_RECIPES]); // ✅ birleşim
+        }
       })();
+
       return () => {
         mounted = false;
       };
@@ -26,9 +33,11 @@ export default function HomeScreen({ navigation }) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return recipes;
-    return recipes.filter((r) => r.title.toLowerCase().includes(q));
-  }, [query]);
+    const base = allRecipes;
+
+    if (!q) return base;
+    return base.filter((r) => (r.title || "").toLowerCase().includes(q));
+  }, [query, allRecipes]);
 
   const toggleFavorite = async (id) => {
     const next = await toggleFavoriteId(id);
@@ -50,7 +59,7 @@ export default function HomeScreen({ navigation }) {
 
       <FlatList
         data={filtered}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.list}
@@ -59,9 +68,7 @@ export default function HomeScreen({ navigation }) {
             item={item}
             isFavorite={favoriteIds.includes(item.id)}
             onToggleFavorite={toggleFavorite}
-            onPress={() =>
-              navigation.navigate("RecipeDetail", { recipe: item })
-            }
+            onPress={() => navigation.navigate("RecipeDetail", { recipe: item })}
           />
         )}
       />

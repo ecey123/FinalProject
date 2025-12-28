@@ -1,7 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+/* ===================== KEYS ===================== */
 const FAVORITES_KEY = "favorites_v1";
+const SHOPPING_KEY = "shopping_v1";
+const USER_KEY = "user_v1";
+const USER_RECIPES_KEY = "user_recipes_v1";
 
+/* ===================== FAVORITES ===================== */
 export async function getFavoriteIds() {
   try {
     const raw = await AsyncStorage.getItem(FAVORITES_KEY);
@@ -27,8 +32,17 @@ export async function toggleFavoriteId(id) {
   await setFavoriteIds(next);
   return next;
 }
-const SHOPPING_KEY = "shopping_v1";
 
+export async function clearFavorites() {
+  try {
+    await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify([]));
+    return [];
+  } catch (e) {
+    return [];
+  }
+}
+
+/* ===================== SHOPPING LIST ===================== */
 export async function getShoppingItems() {
   try {
     const raw = await AsyncStorage.getItem(SHOPPING_KEY);
@@ -62,28 +76,6 @@ export async function addShoppingItem(text) {
   return next;
 }
 
-export async function toggleShoppingItem(id) {
-  const items = await getShoppingItems();
-  const next = items.map((it) =>
-    it.id === id ? { ...it, done: !it.done } : it
-  );
-  await setShoppingItems(next);
-  return next;
-}
-
-export async function removeShoppingItem(id) {
-  const items = await getShoppingItems();
-  const next = items.filter((it) => it.id !== id);
-  await setShoppingItems(next);
-  return next;
-}
-
-export async function clearShoppingDone() {
-  const items = await getShoppingItems();
-  const next = items.filter((it) => !it.done);
-  await setShoppingItems(next);
-  return next;
-}
 export async function addShoppingItems(texts) {
   const items = await getShoppingItems();
 
@@ -109,25 +101,40 @@ export async function addShoppingItems(texts) {
   await setShoppingItems(next);
   return next;
 }
-export async function clearFavorites() {
-  try {
-    await AsyncStorage.setItem("favorites_v1", JSON.stringify([]));
-    return [];
-  } catch (e) {
-    return [];
-  }
+
+export async function toggleShoppingItem(id) {
+  const items = await getShoppingItems();
+  const next = items.map((it) =>
+    it.id === id ? { ...it, done: !it.done } : it
+  );
+  await setShoppingItems(next);
+  return next;
+}
+
+export async function removeShoppingItem(id) {
+  const items = await getShoppingItems();
+  const next = items.filter((it) => it.id !== id);
+  await setShoppingItems(next);
+  return next;
+}
+
+export async function clearShoppingDone() {
+  const items = await getShoppingItems();
+  const next = items.filter((it) => !it.done);
+  await setShoppingItems(next);
+  return next;
 }
 
 export async function clearShopping() {
   try {
-    await AsyncStorage.setItem("shopping_v1", JSON.stringify([]));
+    await AsyncStorage.setItem(SHOPPING_KEY, JSON.stringify([]));
     return [];
   } catch (e) {
     return [];
   }
 }
-const USER_KEY = "user_v1";
 
+/* ===================== USER (LOGIN) ===================== */
 export async function setUser(user) {
   try {
     await AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
@@ -156,4 +163,60 @@ export async function clearUser() {
   }
 }
 
+/* ===================== USER RECIPES (ADD RECIPE) ===================== */
+export async function getUserRecipes() {
+  try {
+    const raw = await AsyncStorage.getItem(USER_RECIPES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function addUserRecipe(recipe) {
+  const list = await getUserRecipes();
+  const next = [recipe, ...list];
+  try {
+    await AsyncStorage.setItem(USER_RECIPES_KEY, JSON.stringify(next));
+    return next;
+  } catch (e) {
+    return list;
+  }
+}
+export async function deleteUserRecipe(id) {
+  try {
+    const raw = await AsyncStorage.getItem(USER_RECIPES_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    const safeList = Array.isArray(list) ? list : [];
+
+    const next = safeList.filter((r) => String(r?.id) !== String(id));
+
+    await AsyncStorage.setItem(USER_RECIPES_KEY, JSON.stringify(next));
+    return next;
+  } catch (e) {
+    return await getUserRecipes();
+  }
+}
+const AVATAR_KEY = "avatar_index_v1";
+
+export async function setAvatarIndex(index) {
+  try {
+    await AsyncStorage.setItem(AVATAR_KEY, String(index));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+export async function getAvatarIndex() {
+  try {
+    const raw = await AsyncStorage.getItem(AVATAR_KEY);
+    if (raw === null) return null;
+    return Number(raw);
+  } catch (e) {
+    return null;
+  }
+}
 

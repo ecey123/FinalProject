@@ -6,10 +6,16 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { addShoppingItems, getFavoriteIds, toggleFavoriteId } from "../storage/storage";
+import {
+  addShoppingItems,
+  getFavoriteIds,
+  toggleFavoriteId,
+  deleteUserRecipe,
+} from "../storage/storage";
 
 export default function RecipeDetailScreen({ route, navigation }) {
   const { recipe } = route.params;
@@ -58,6 +64,30 @@ export default function RecipeDetailScreen({ route, navigation }) {
     setFavoriteIds(next);
   };
 
+  // ✅ DELETE: componentin içinde, doğru scope
+  const onDelete = () => {
+    Alert.alert("Delete recipe?", "This will permanently remove your recipe.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          await deleteUserRecipe(recipe.id);
+
+          // Eğer tarif favorilerdeyse, favorilerden de kaldır
+          if (favoriteIds.includes(recipe.id)) {
+            const nextFav = await toggleFavoriteId(recipe.id);
+            setFavoriteIds(nextFav);
+          }
+
+          Alert.alert("Deleted ✅", "Your recipe was removed.", [
+            { text: "OK", onPress: () => navigation.goBack() },
+          ]);
+        },
+      },
+    ]);
+  };
+
   return (
     <View style={styles.container}>
       {/* Back button */}
@@ -69,7 +99,7 @@ export default function RecipeDetailScreen({ route, navigation }) {
         <Ionicons name="chevron-back" size={22} color="#5A2A2A" />
       </TouchableOpacity>
 
-      {/* Favorite heart (top-right) */}
+      {/* Favorite heart */}
       <TouchableOpacity
         style={styles.favBtn}
         onPress={onToggleFavorite}
@@ -97,7 +127,7 @@ export default function RecipeDetailScreen({ route, navigation }) {
           </View>
         </View>
 
-        {/* Add selected button */}
+        {/* Add selected */}
         <TouchableOpacity
           style={[
             styles.addBtn,
@@ -108,11 +138,7 @@ export default function RecipeDetailScreen({ route, navigation }) {
           activeOpacity={0.9}
           disabled={selected.length === 0}
         >
-          <Ionicons
-            name={added ? "checkmark" : "cart"}
-            size={18}
-            color="#fff"
-          />
+          <Ionicons name={added ? "checkmark" : "cart"} size={18} color="#fff" />
           <Text style={styles.addBtnText}>
             {added
               ? "Added to shopping list!"
@@ -121,6 +147,18 @@ export default function RecipeDetailScreen({ route, navigation }) {
               : `Add ${selected.length} items to shopping list`}
           </Text>
         </TouchableOpacity>
+
+        {/* ✅ Delete (only user recipes) */}
+        {recipe?.isUser ? (
+          <TouchableOpacity
+            style={styles.deleteBtn}
+            onPress={onDelete}
+            activeOpacity={0.9}
+          >
+            <Ionicons name="trash-outline" size={18} color="#fff" />
+            <Text style={styles.deleteText}>Delete recipe</Text>
+          </TouchableOpacity>
+        ) : null}
 
         <View style={styles.sectionHeader}>
           <Text style={styles.section}>Ingredients</Text>
@@ -134,7 +172,8 @@ export default function RecipeDetailScreen({ route, navigation }) {
               <Text
                 style={[
                   styles.actionText,
-                  (ingredients.length === 0 || allSelected) && styles.actionDisabled,
+                  (ingredients.length === 0 || allSelected) &&
+                    styles.actionDisabled,
                 ]}
               >
                 Select all
@@ -249,13 +288,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#F7D9E0",
   },
-  addBtnDisabled: {
-    opacity: 0.6,
-  },
-  addBtnDone: {
-    backgroundColor: "#F4B6C2",
-  },
+  addBtnDisabled: { opacity: 0.6 },
+  addBtnDone: { backgroundColor: "#F4B6C2" },
   addBtnText: {
+    color: "#fff",
+    fontWeight: "900",
+    marginLeft: 10,
+    fontSize: 13,
+  },
+
+  deleteBtn: {
+    marginTop: 10,
+    marginHorizontal: 16,
+    backgroundColor: "#B5838D",
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#F7D9E0",
+  },
+  deleteText: {
     color: "#fff",
     fontWeight: "900",
     marginLeft: 10,
@@ -270,11 +325,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     justifyContent: "space-between",
   },
-  section: {
-    fontSize: 16,
-    fontWeight: "900",
-    color: "#E5989B",
-  },
+  section: { fontSize: 16, fontWeight: "900", color: "#E5989B" },
   actions: { flexDirection: "row", alignItems: "center" },
   actionText: {
     fontSize: 12,

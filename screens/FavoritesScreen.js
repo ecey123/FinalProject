@@ -3,20 +3,29 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 import RecipeCard from "../components/RecipeCard";
-import { recipes } from "../data/recipes";
-import { getFavoriteIds, toggleFavoriteId } from "../storage/storage";
+import { recipes as DEFAULT_RECIPES } from "../data/recipes";
+import { getFavoriteIds, toggleFavoriteId, getUserRecipes } from "../storage/storage";
 import EmptyState from "../components/EmptyStateComponent";
 
 export default function FavoritesScreen({ navigation }) {
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const [allRecipes, setAllRecipes] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
+
       (async () => {
         const ids = await getFavoriteIds();
-        if (mounted) setFavoriteIds(ids);
+        const user = await getUserRecipes();
+        const merged = [...user, ...DEFAULT_RECIPES];
+
+        if (mounted) {
+          setFavoriteIds(ids);
+          setAllRecipes(merged);
+        }
       })();
+
       return () => {
         mounted = false;
       };
@@ -24,8 +33,8 @@ export default function FavoritesScreen({ navigation }) {
   );
 
   const favorites = useMemo(() => {
-    return recipes.filter((r) => favoriteIds.includes(r.id));
-  }, [favoriteIds]);
+    return allRecipes.filter((r) => favoriteIds.includes(r.id));
+  }, [favoriteIds, allRecipes]);
 
   const toggleFavorite = async (id) => {
     const next = await toggleFavoriteId(id);
@@ -45,7 +54,7 @@ export default function FavoritesScreen({ navigation }) {
       ) : (
         <FlatList
           data={favorites}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           numColumns={2}
           columnWrapperStyle={styles.row}
           contentContainerStyle={styles.list}
