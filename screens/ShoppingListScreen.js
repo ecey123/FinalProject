@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#E5989B",
     textAlign: "center",
-    marginTop: 24,
+    marginTop: 40,
   },
   sub: {
     fontSize: 13,

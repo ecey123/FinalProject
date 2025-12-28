@@ -72,7 +72,8 @@ export const recipes = [
     title: "Chocolate Waffles",
     time: "18 min",
     image:
-      "https://images.unsplash.com/photo-1514516430035-0c2b1f0f6a3b?auto=format&fit=crop&w=800&q=60",
+  "https://images.unsplash.com/photo-1517741991040-91338b176129?auto=format&fit=crop&w=800&q=60",
+
     ingredients: [
       "Waffle mix",
       "Milk",
@@ -90,8 +91,9 @@ export const recipes = [
     id: "6",
     title: "Banana Oat Pancakes",
     time: "15 min",
-    image:
-      "https://images.unsplash.com/photo-1587738347115-cc8c6f0b6f5f?auto=format&fit=crop&w=800&q=60",
+   image:
+  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=60",
+
     ingredients: [
       "1 banana",
       "1 cup oats",
@@ -147,7 +149,8 @@ export const recipes = [
     title: "Blueberry Yogurt Bowl",
     time: "8 min",
     image:
-      "https://images.unsplash.com/photo-1506086679525-9c8c9f02c6b1?auto=format&fit=crop&w=800&q=60",
+ "https://images.unsplash.com/photo-1725883691833-97103ecd582a?fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.1.0&q=60&w=800",
+
     ingredients: [
       "Greek yogurt",
       "Blueberries",
@@ -165,7 +168,8 @@ export const recipes = [
     title: "Cheese Omelette",
     time: "10 min",
     image:
-      "https://images.unsplash.com/photo-1604908177522-4328a3f0f25b?auto=format&fit=crop&w=800&q=60",
+  "https://images.unsplash.com/photo-1510693206972-df098062cb71?fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.1.0&q=60&w=800"
+,
     ingredients: ["2 eggs", "Cheese", "Salt", "Butter"],
     steps: [
       "Whisk eggs with salt.",
