@@ -1,4 +1,4 @@
-# RecipeNest 🍓✨  
+# RecipeNest 
 **Student Name:** Ece Yüksektepe  
 **Student ID:** 220408028  
 
@@ -114,6 +114,7 @@ RecipeNest/
 └── avatar4.png
 └── avatar5.png
 └── avatar6.png
+
 
 
 
